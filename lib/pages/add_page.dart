@@ -1,4 +1,8 @@
+import 'dart:convert';
+
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class AddTodoPage extends StatefulWidget {
   const AddTodoPage({super.key});
@@ -8,6 +12,9 @@ class AddTodoPage extends StatefulWidget {
 }
 
 class _AddTodoPageState extends State<AddTodoPage> {
+  //form data
+  TextEditingController titleController = TextEditingController();
+  TextEditingController descriptionController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,20 +24,28 @@ class _AddTodoPageState extends State<AddTodoPage> {
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: [
-          const TextField(
-            decoration: InputDecoration(hintText: "Title"),
+
+          TextField(
+            controller: titleController,
+            autofocus: true,
+            decoration: const InputDecoration(hintText: "Title"),
           ),
-          const TextField(
-            decoration: InputDecoration(hintText: "Description"),
+
+          TextField(
+            controller: descriptionController,
+            autofocus: true,
+            decoration: const InputDecoration(hintText: "Description"),
             keyboardType: TextInputType.multiline,
             minLines: 5,
             maxLines: 8,
           ),
+
           const SizedBox(
             height: 20,
           ),
+
           ElevatedButton(
-            onPressed: () {},
+            onPressed: submitData,
             child: const Text("Submit Todo"),
           ),
         ],
@@ -39,12 +54,27 @@ class _AddTodoPageState extends State<AddTodoPage> {
   }
 
   //submit form method
-  void submitData(){
+  Future<void> submitData() async {
     //get data from form
+    final title = titleController.text;
+    final description = descriptionController.text;
+    final body = {
+      "title": title,
+      "description": description,
+      "is_completed": false
+    };
 
     //submit data to the server
-
-    //show success message
-
+    const url = 'http://api.nstack.in/v1/todos';
+    final uri = Uri.parse(url);
+    final response = await http.post(
+      uri,
+      body: jsonEncode(body),
+      headers: {'ContentType': 'application/json'},
+    );
+    //show success or fail message base on status
+   
+    print(response.statusCode);
+    print(response.body);
   }
 }
