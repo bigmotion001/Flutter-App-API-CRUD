@@ -1,5 +1,6 @@
 import 'package:apicrud/pages/add_page.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class TodoListPage extends StatefulWidget {
   const TodoListPage({super.key});
@@ -10,6 +11,8 @@ class TodoListPage extends StatefulWidget {
 
 class _TodoListPageState extends State<TodoListPage> {
   @override
+ 
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -31,5 +34,14 @@ class _TodoListPageState extends State<TodoListPage> {
       },
     );
     Navigator.push(context, route);
+  }
+
+  //get all task
+  Future<void> fetchTodo() async {
+    const url = 'http://127.0.0.1:8000/api/task/all';
+    final uri = Uri.parse(url);
+    final response = await http.get(uri);
+
+    print(response.body);
   }
 }
